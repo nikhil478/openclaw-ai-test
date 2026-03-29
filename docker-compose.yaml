@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  openclaw:
+    build: .
+    container_name: openclaw_safe
+    volumes:
+      - ./data:/home/appuser/.openclaw
+    ports:
+      - "18789:18789"
+    command: >
+      sh -c "
+      openclaw gateway --port 19000 --force --allow-unconfigured &
+      sleep 2 &&
+      socat TCP-LISTEN:18789,fork,reuseaddr TCP:127.0.0.1:19000
+      "
+    restart: unless-stopped
